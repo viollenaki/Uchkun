@@ -4,7 +4,6 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password, make_password
 from .models import User
-from .serializers import UserSerializer
 
 # Register View using DRF APIView
 class RegisterView(APIView):
@@ -47,3 +46,18 @@ class LoginView(APIView):
             return Response({'message': 'Login successful.', 'user_type': user.user_type})
         else:
             return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+from django.shortcuts import render
+
+def admin_dashboard(request):
+    return render(request, 'university/main.html', {'user_type': 'admin'})
+
+def professor_dashboard(request):
+    return render(request, 'teachers/professor-dashboard.html')
+
+def student_dashboard(request):
+    return render(request, 'student/student-dashboard.html')
+
+def login(request):
+    return render(request, 'security/login.html')
+
+# API Views for Student model

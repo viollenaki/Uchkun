@@ -3,12 +3,12 @@ from django.db import models
 class User(models.Model):
     ADMIN = 'admin'
     STUDENT = 'student'
-    TEACHER = 'teacher'
+    TEACHER = 'professor'
 
     USER_TYPES = [
         (ADMIN, 'Admin'),
         (STUDENT, 'Student'),
-        (TEACHER, 'Teacher'),
+        (TEACHER, 'Professor'),
     ]
 
     username = models.CharField(max_length=150, unique=True)  # Username

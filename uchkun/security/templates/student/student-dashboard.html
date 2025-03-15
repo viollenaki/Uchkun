@@ -175,12 +175,13 @@
 <body>
     <!-- Student-specific Navbar -->
     <div class="navbar student-navbar">
-        <h1>Student Dashboard</h1>
+        <h1 id="username"></h1>
         <div class="nav-links">
             <a href="javascript:void(0)">My Classes</a>
             <a href="index.html">Logout</a>
         </div>
     </div>
+    
 
     <div class="content-container">
         <div class="left-bar">
@@ -201,6 +202,7 @@
     </div>
 
     <script>
+        document.getElementById("username").textContent =localStorage.getItem('username');
         // Temporary data - would be replaced by API calls
         const student = {
             id: "S12345",
@@ -223,6 +225,7 @@
             3: 92,
             4: 88
         };
+
 
         // Populate student info
         function populateStudentInfo() {
