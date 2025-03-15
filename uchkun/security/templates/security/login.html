@@ -95,14 +95,35 @@
             margin-bottom: 15px;
             display: none;
         }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 2px solid #eee;
+        }
+        .tab.active {
+            border-bottom: 2px solid #007bff;
+            color: #007bff;
+        }
+        #registerForm {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Страница входа</h2>
+        <div class="tabs">
+            <div class="tab active" id="loginTab">Вход</div>
+            <div class="tab" id="registerTab">Регистрация</div>
+        </div>
+        
         <div id="loginAlert" class="alert"></div>
+        
         <form id="loginForm" method="post">
-            {% csrf_token %}
             <div class="input-group">
                 <input type="text" id="username" name="username" placeholder=" " autocomplete="username" required>
                 <label for="username">Имя пользователя</label>
@@ -114,9 +135,43 @@
             </div>
             <button type="submit" id="loginButton">Войти</button>
         </form>
+        
+        <form id="registerForm" method="post">
+            <div class="input-group">
+                <input type="text" id="regUsername" name="username" placeholder=" " autocomplete="username" required>
+                <label for="regUsername">Имя пользователя</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="regPassword" name="password" placeholder=" " autocomplete="new-password" required>
+                <label for="regPassword">Пароль</label>
+                <span class="show-password" id="toggleRegPassword">👁️</span>
+            </div>
+            <div class="input-group">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder=" " autocomplete="new-password" required>
+                <label for="confirmPassword">Подтвердите пароль</label>
+            </div>
+            <button type="submit" id="registerButton">Зарегистрироваться</button>
+        </form>
     </div>
 
     <script>
+        // Tab switching logic
+        document.getElementById("loginTab").addEventListener("click", function() {
+            this.classList.add("active");
+            document.getElementById("registerTab").classList.remove("active");
+            document.getElementById("loginForm").style.display = "block";
+            document.getElementById("registerForm").style.display = "none";
+            document.getElementById("loginAlert").style.display = "none";
+        });
+        
+        document.getElementById("registerTab").addEventListener("click", function() {
+            this.classList.add("active");
+            document.getElementById("loginTab").classList.remove("active");
+            document.getElementById("registerForm").style.display = "block";
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("loginAlert").style.display = "none";
+        });
+
         // Toggle password visibility
         document.getElementById("togglePassword").addEventListener("click", function() {
             const passwordInput = document.getElementById("password");
@@ -128,8 +183,19 @@
                 this.textContent = "👁️";
             }
         });
+        
+        document.getElementById("toggleRegPassword").addEventListener("click", function() {
+            const passwordInput = document.getElementById("regPassword");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                this.textContent = "🔒";
+            } else {
+                passwordInput.type = "password";
+                this.textContent = "👁️";
+            }
+        });
 
-        // Form submission
+        // Form validation and submission for login
         document.getElementById("loginForm").addEventListener("submit", async function(event) {
             event.preventDefault(); // Prevent form submission
 
@@ -149,30 +215,110 @@
             loginButton.disabled = true;
             loginButton.textContent = "Вход...";
             
-            // Simulate API call (replace with your actual login logic)
-            setTimeout(() => {
-                console.log("Login attempt:", { 
-                    username, 
-                    password: "********" // Don't log actual passwords
+            try {
+                // Используйте fetch или создайте мок для тестирования
+                const response = await fetch("http://127.0.0.1:8000/security/login/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, password })
                 });
                 
-                // Mock authentication - in real app, this would be handled by your backend
-                if (username === "demo" && password === "demo123") {
-                    // Redirect to main page instead of home page
+                // Если сервер недоступен, используем встроенную проверку для демо
+                if (!response.ok) {
+                    // Mock authentication для демонстрации
+                    if (username === "demo" && password === "demo123") {
+                        window.location.href = "/";
+                        return;
+                    } else {
+                        throw new Error("Неверное имя пользователя или пароль");
+                    }
+                }
+                
+                const data = await response.json();
+                
+                // Перенаправление в зависимости от типа пользователя
+                if (data.user_type === "student") {
+                    window.open("http://127.0.0.1:8000/student-dashboard/", "_self");
+                } else if (data.user_type === "professor") {
+                    window.open("http://127.0.0.1:8000/professor-dashboard/", "_self");
+                } else if (data.user_type === "admin") {
+                    window.open("http://127.0.0.1:8000/admin-dashboard/", "_self");
+                } else {
                     window.location.href = "/main";
                 }
-                else {
-                    alert.style.display = "block";
-                    alert.textContent = data.error || "Неверное имя пользователя или пароль. Попробуйте еще раз.";
-                }
+                
             } catch (error) {
                 console.error("Ошибка при входе:", error);
                 alert.style.display = "block";
-                alert.textContent = "Произошла ошибка при входе. Попробуйте еще раз.";
+                alert.textContent = "Неверное имя пользователя или пароль. Попробуйте еще раз.";
             } finally {
                 // Re-enable button
                 loginButton.disabled = false;
                 loginButton.textContent = "Войти";
+            }
+        });
+
+        // Registration form handling
+        document.getElementById("registerForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById("regUsername").value.trim();
+            const password = document.getElementById("regPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const alert = document.getElementById("loginAlert");
+            
+            // Validation
+            if (!username || !password) {
+                alert.style.display = "block";
+                alert.textContent = "Заполните все поля.";
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert.style.display = "block";
+                alert.textContent = "Пароли не совпадают.";
+                return;
+            }
+            
+            // Disable button
+            const registerButton = document.getElementById("registerButton");
+            registerButton.disabled = true;
+            registerButton.textContent = "Регистрация...";
+            
+            try {
+                const response = await fetch("/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (response.ok) {
+                    alert.style.display = "block";
+                    alert.style.backgroundColor = "#d4edda";
+                    alert.style.color = "#155724";
+                    alert.textContent = "Регистрация успешна! Теперь вы можете войти.";
+                    
+                    // Switch to login tab
+                    setTimeout(() => {
+                        document.getElementById("loginTab").click();
+                    }, 2000);
+                    
+                } else {
+                    const data = await response.json();
+                    alert.style.display = "block";
+                    alert.textContent = data.error || "Ошибка при регистрации.";
+                }
+            } catch (error) {
+                console.error("Ошибка при регистрации:", error);
+                alert.style.display = "block";
+                alert.textContent = "Произошла ошибка при регистрации. Попробуйте еще раз.";
+            } finally {
+                registerButton.disabled = false;
+                registerButton.textContent = "Зарегистрироваться";
             }
         });
 

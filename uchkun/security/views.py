@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -46,3 +47,18 @@ class LoginView(APIView):
             return Response({'message': 'Login successful.', 'user_type': user.user_type})
         else:
             return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+
+def login(request):
+    return render(request, 'security/login.html')
+
+
+def student_dashboard(request):
+    return render(request, 'student/student-dashboard.html')
+
+
+def professor_dashboard(request):
+    return render(request, 'professor/professor-dashboard.html')
+
+def admin_dashboard(request):
+    return render(request, 'university/main.html')
