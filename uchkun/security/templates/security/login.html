@@ -148,43 +148,20 @@
             const loginButton = document.getElementById("loginButton");
             loginButton.disabled = true;
             loginButton.textContent = "Вход...";
-
-            // Send login request to Django backend
-            try {
-                const response = await fetch("http://127.0.0.1:8000/security/login/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": "{{ csrf_token }}"  // Include CSRF token
-                    },
-                    body: JSON.stringify({ username, password })
+            
+            // Simulate API call (replace with your actual login logic)
+            setTimeout(() => {
+                console.log("Login attempt:", { 
+                    username, 
+                    password: "********" // Don't log actual passwords
                 });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // Redirect based on user_type
-                    if (data.user_type === "student") {
-                        if("username" in localStorage){
-                            localStorage.removeItem("username");
-                        }
-                        localStorage.setItem("username", username);
-                        window.location.href = "/student-dashboard/";
-
-
-                    } else if (data.user_type === "professor") {
-                        if("professor" in localStorage){
-                            localStorage.removeItem("professor");
-                        }
-                        window.location.href = "/professor-dashboard/";
-                    } else if (data.user_type === "admin") {
-                        if("admin" in localStorage){
-                            localStorage.removeItem("admin");
-                        }
-                        window.location.href = "/admin-dashboard/";
-                    }
-                } else {
-                    // Show error message
+                
+                // Mock authentication - in real app, this would be handled by your backend
+                if (username === "demo" && password === "demo123") {
+                    // Redirect to main page instead of home page
+                    window.location.href = "/main";
+                }
+                else {
                     alert.style.display = "block";
                     alert.textContent = data.error || "Неверное имя пользователя или пароль. Попробуйте еще раз.";
                 }
