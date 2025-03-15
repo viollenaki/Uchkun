@@ -1,7 +1,9 @@
 from django.urls import path
-from .views import RegisterView, LoginView
+from .views import RegisterView, LoginView,student_dashboard,professor_dashboard,admin_dashboard,login
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),  # Register endpoint
-    path('login/', LoginView.as_view(), name='login'),  # Login endpoint
+    path('login/', LoginView.as_view(), name='login'),
+    path('professor-dashboard/', professor_dashboard, name='professor_dashboard'),
+    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),  # Login endpoint
 ]
