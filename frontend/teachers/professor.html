@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor Dashboard</title>
+    <style>
+        /* Professor-specific Navbar */
+.professor-navbar {
+    background-color: #2c3e50; /* Dark blue */
+}
+
+.professor-navbar .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    margin-left: 20px;
+}
+
+.professor-navbar .nav-links a:hover {
+    color: #1abc9c; /* Teal */
+}
+
+/* Professor Page Styles */
+.content-container {
+    display: flex;
+    padding: 20px;
+}
+
+.left-bar {
+    width: 250px;
+    border-right: 1px solid #ccc;
+    padding-right: 20px;
+}
+
+.right-bar {
+    flex: 1;
+    padding-left: 20px;
+}
+
+.student-list a {
+    display: block;
+    margin: 10px 0;
+    cursor: pointer;
+    color: #333;
+    text-decoration: none;
+}
+
+.student-list a:hover {
+    color: #1abc9c; /* Teal */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+input[type="text"] {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #1abc9c; /* Teal */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #16a085; /* Darker teal */
+}
+    </style>
+</head>
+<body>
+    <!-- Professor-specific Navbar -->
+    <div class="navbar professor-navbar">
+        <h1>Professor Dashboard</h1>
+        <div class="nav-links">
+            <a href="professor.html">My Classes</a>
+            <a href="students.html">All Students</a>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <div class="left-bar">
+            <h3>Students in My Classes</h3>
+            <div class="student-list" id="student-list">
+                <!-- Student list will be populated dynamically -->
+            </div>
+        </div>
+        <div class="right-bar" id="right-bar">
+            <h3>Select a student to view their subjects and assign grades</h3>
+        </div>
+    </div>
+
+    <script >// Fake data for the professor's classes and students
+        const professor = {
+            id: 1,
+            name: "Dr. Alice Brown",
+            classes: ["Math", "Physics"],
+        };
+        
+        const students = [
+            { id: 1, name: "John Doe", subjects: ["Math", "History"] },
+            { id: 2, name: "Jane Smith", subjects: ["Math", "Physics"] },
+            { id: 3, name: "Mark Johnson", subjects: ["Physics", "History"] },
+        ];
+        
+        const grades = {
+            1: { Math: "", Physics: "" },
+            2: { Math: "", Physics: "" },
+            3: { Math: "", Physics: "" },
+        };
+        
+        // Populate student list
+        function populateStudentList() {
+            const studentList = document.getElementById("student-list");
+            studentList.innerHTML = students
+                .filter(student => student.subjects.some(subject => professor.classes.includes(subject)))
+                .map(student => `
+                    <a href="#" onclick="showStudentSubjects(${student.id})">${student.name}</a>
+                `)
+                .join("");
+        }
+        
+        // Show student subjects and grade input form
+        function showStudentSubjects(studentId) {
+            const student = students.find(s => s.id === studentId);
+            const rightBar = document.getElementById("right-bar");
+        
+            // Filter subjects taught by the professor
+            const subjectsTaught = student.subjects.filter(subject => professor.classes.includes(subject));
+        
+            rightBar.innerHTML = `
+                <h3>${student.name}'s Subjects</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${subjectsTaught.map(subject => `
+                            <tr>
+                                <td>${subject}</td>
+                                <td>
+                                    <input type="text" id="grade-${studentId}-${subject}" value="${grades[studentId][subject]}" placeholder="Enter grade">
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+                <button onclick="saveGrades(${studentId})">Save Grades</button>
+            `;
+        }
+        
+        // Save grades for a student
+        function saveGrades(studentId) {
+            const student = students.find(s => s.id === studentId);
+            const subjectsTaught = student.subjects.filter(subject => professor.classes.includes(subject));
+        
+            subjectsTaught.forEach(subject => {
+                const gradeInput = document.getElementById(`grade-${studentId}-${subject}`);
+                grades[studentId][subject] = gradeInput.value;
+            });
+        
+            alert("Grades saved successfully!");
+        }
+        
+        // Initialize student list on page load
+        if (document.getElementById("student-list")) {
+            populateStudentList();
+        }</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>University Portal</h1>
+        <div class="nav-links">
+            <a href="students.html">Students</a>
+            <a href="professors.html">Professors</a>
+            <a href="classes.html">Classes</a>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <div class="left-bar">
+            <h3>Students</h3>
+            <button onclick="openAddStudentModal()">Add Student</button>
+            <div class="student-list" id="student-list">
+                <!-- Student list will be populated dynamically -->
+            </div>
+        </div>
+        <div class="right-bar" id="right-bar">
+            <h3>Select a student to view their grades</h3>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddStudentModal()">&times;</span>
+            <h3>Add New Student</h3>
+            <form id="addStudentForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <label>Subjects:</label>
+                <div>
+                    <input type="checkbox" id="math" name="subjects" value="Math">
+                    <label for="math">Math</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="history" name="subjects" value="History">
+                    <label for="history">History</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="physics" name="subjects" value="Physics">
+                    <label for="physics">Physics</label>
+                </div>
+
+                <button type="button" onclick="registerStudent()">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
