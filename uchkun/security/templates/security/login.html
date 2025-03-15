@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Вход в систему</title>
     <style>
         * {
             box-sizing: border-box;
@@ -99,19 +99,20 @@
 </head>
 <body>
     <div class="container">
-        <h2>Welcome Back</h2>
+        <h2>Страница входа</h2>
         <div id="loginAlert" class="alert"></div>
-        <form id="loginForm">
+        <form id="loginForm" method="post">
+            {% csrf_token %}
             <div class="input-group">
-                <input type="text" id="username" placeholder=" " autocomplete="username">
-                <label for="username">Username or Email</label>
+                <input type="text" id="username" name="username" placeholder=" " autocomplete="username" required>
+                <label for="username">Имя пользователя</label>
             </div>
             <div class="input-group">
-                <input type="password" id="password" placeholder=" " autocomplete="current-password">
-                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder=" " autocomplete="current-password" required>
+                <label for="password">Пароль</label>
                 <span class="show-password" id="togglePassword">👁️</span>
             </div>
-            <button type="submit" id="loginButton">Login</button>
+            <button type="submit" id="loginButton">Войти</button>
         </form>
     </div>
 
@@ -138,14 +139,14 @@
             // Simple validation
             if (!username || !password) {
                 alert.style.display = "block";
-                alert.textContent = "Please enter both username and password.";
+                alert.textContent = "Пожалуйста, введите имя пользователя и пароль.";
                 return;
             }
             
             // Disable button to prevent multiple submissions
             const loginButton = document.getElementById("loginButton");
             loginButton.disabled = true;
-            loginButton.textContent = "Logging in...";
+            loginButton.textContent = "Вход...";
             
             // Simulate API call (replace with your actual login logic)
             setTimeout(() => {
@@ -156,12 +157,14 @@
                 
                 // Mock authentication - in real app, this would be handled by your backend
                 if (username === "demo" && password === "demo123") {
-                    window.location.href = "dashboard.html"; // Redirect on success
-                } else {
+                    // Redirect to main page instead of home page
+                    window.location.href = "/main";
+                }
+                else {
                     alert.style.display = "block";
-                    alert.textContent = "Invalid username or password. Please try again.";
+                    alert.textContent = "Неверное имя пользователя или пароль. Попробуйте еще раз.";
                     loginButton.disabled = false;
-                    loginButton.textContent = "Login";
+                    loginButton.textContent = "Войти";
                 }
             }, 1000);
         });
