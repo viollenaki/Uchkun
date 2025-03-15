@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .container {
+            padding: 30px;
+            background-color: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            width: 350px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.2);
+        }
+        .input-group label {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: #777;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 10px;
+            font-size: 12px;
+            background: white;
+            padding: 0 5px;
+            color: #007bff;
+        }
+        .show-password {
+            position: absolute;
+            right: 10px;
+            top: 12px;
+            color: #777;
+            cursor: pointer;
+            user-select: none;
+        }
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .alert {
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome Back</h2>
+        <div id="loginAlert" class="alert"></div>
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="text" id="username" placeholder=" " autocomplete="username">
+                <label for="username">Username or Email</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder=" " autocomplete="current-password">
+                <label for="password">Password</label>
+                <span class="show-password" id="togglePassword">👁️</span>
+            </div>
+            <button type="submit" id="loginButton">Login</button>
+        </form>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        document.getElementById("togglePassword").addEventListener("click", function() {
+            const passwordInput = document.getElementById("password");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                this.textContent = "🔒";
+            } else {
+                passwordInput.type = "password";
+                this.textContent = "👁️";
+            }
+        });
+
+        // Form validation and submission
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            const alert = document.getElementById("loginAlert");
+            
+            // Simple validation
+            if (!username || !password) {
+                alert.style.display = "block";
+                alert.textContent = "Please enter both username and password.";
+                return;
+            }
+            
+            // Disable button to prevent multiple submissions
+            const loginButton = document.getElementById("loginButton");
+            loginButton.disabled = true;
+            loginButton.textContent = "Logging in...";
+            
+            // Simulate API call (replace with your actual login logic)
+            setTimeout(() => {
+                console.log("Login attempt:", { 
+                    username, 
+                    password: "********" // Don't log actual passwords
+                });
+                
+                // Mock authentication - in real app, this would be handled by your backend
+                if (username === "demo" && password === "demo123") {
+                    window.location.href = "dashboard.html"; // Redirect on success
+                } else {
+                    alert.style.display = "block";
+                    alert.textContent = "Invalid username or password. Please try again.";
+                    loginButton.disabled = false;
+                    loginButton.textContent = "Login";
+                }
+            }, 1000);
+        });
+
+        // Clear error message when user starts typing again
+        document.querySelectorAll("input").forEach(input => {
+            input.addEventListener("input", function() {
+                document.getElementById("loginAlert").style.display = "none";
+            });
+        });
+    </script>
+</body>
+</html>
